@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="icon" href="data:,">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="author" content="">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+		<!-- <link href="static/css/main.css" rel="stylesheet" type="text/css" /> -->
+
+		<!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
+		<!--[if lt IE 9]>
+					<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+
+
+		{% block head %}
+			<title>{% block title %} The Arbitrator 0.1{% endblock %}</title>
+		{% endblock %}
+	</head>
+
+	<body>
+		<div class="container" style="background-color:lavender;">
+			<h1>The Arbitrator 0.1</h1>
+			<div class="row">
+				<div class="col" style="background-color:white;padding: 5px">Query datetime (UTC): {{ ts|safe }}</div>
+				<div class="col" style="background-color:white;padding: 5px">Arbitrage (no fees): {{ arb|safe }}</div>
+				<div class="col" style="background-color:white;padding: 5px">Rate (ZAR:EUR, padded): {{ rate_padded|safe }}</div>
+				<div class="col" style="background-color:white;padding: 5px">Luno price (ZAR): {{ luno|safe }}</div>
+				<div class="col" style="background-color:white;padding: 5px">Kraken price (ZAR): {{ krakenz|safe }}</div>							
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4>Exchange rate and BTC prices:</h4>
+					<label for='rate' >Polled exchange rate</label>
+					<input type="text" id="rate_api" name="rate_api" value="{{ rate|safe }}" onchange="rate_adj_change()" /> (<a href="https://fixer.io" target="_blank">https://fixer.io</a>)</br>
+					<label for='rate' >Exchange rate padding</label>
+					<input type="text" id="rate_padding" name="rate_padding" value="{{ rate_padding|safe }}"" onchange="rate_adj_change()" /></br>
+					
+					<label for='rate' >Exchange rate</label>
+					<input type="text" id="rate" name="rate" onchange="rate_change()" /> Replace with actual Euro selling rate (<a href="https://www.fnb.co.za/rates/ForeignExchangeRates.html" target="_blank">fnb</a>)</br>
+					
+					<label for='krakene' >Kraken EUR</label>
+					<input type="text" id="krakene" name="krakene" value="{{ krakene|safe }}" readonly/>
+					<label for='krakenz' >Zar</label>
+					<input type="text" id="krakenz" name="krakenz" value="{{ krakenz|safe }}" readonly/></br>
+					<label >Luno Zar</label>
+					<input type="text" id="luno" name="luno" value="{{ luno }}" readonly/></br>
+				</div>
+				<div class="col">
+					<h4>Investment & Fees:</h4>
+					<label >Capital investment (ZAR)</label>
+					<input type="text" id="capital_investment" name="capital_investment" value=50000.00 onchange="capital_investment_change()"/></br>
+					<label >Local bank charges (ZAR)</label>
+					<input type="text" id="local_charges" name="local_charges" onchange="returns_update()"/> (<a href="https://www.fnb.co.za/downloads/pricing-guide/products/FNB_PricingGuide_Forex.pdf" target="_blank">fnb</a>)</br>
+					<label >Swift fees (ZAR)</label>
+					<input type="text" id="swift_fees" name="swift_fees" value = 150.00 onchange="returns_update()"/> (<a href="https://www.fnb.co.za/downloads/pricing-guide/products/FNB_PricingGuide_Forex.pdf" target="_blank">fnb</a>)</br>
+					<label >Remote charges (ZAR)</label>
+					<input type="text" id="remote_charges" name="remote_charges" onchange="returns_update()"/></br>
+					<label >Kraken trade fees (%)</label>
+					<input type="text" id="kraken_trade_fees" name="kraken_trade_fees" value = 0.26 onchange="returns_update()"/></br>
+					<label >Luno trade fees (%)</label>
+					<input type="text" id="luno_trade_fees" name="luno_trade_fees" value = 1.0 onchange="returns_update()"/></br>
+					<label >Luno withdrawel fees (ZAR)</label>
+					<input type="text" id="luno_withdraw_fees" name="luno_withdraw_fees" value = 8.50 onchange="returns_update()"/></br>
+				</div>
+				<div class="col"></div>
+					<h4>Returns:</h4>
+					<label >Remote BTC</label>
+					<input type="text" id="remote_btc" name="remote_btc" onchange=""/></br>
+					<label >Return</label>
+					<input type="text" id="ret" name="ret" /></br>
+					<label >Arbitrage (corrected)</label>
+					<input type="text" id="arb_adj" name="arb_adj" /></br>
+				</div>
+			</div>
+			<div class="row">
+				<div id="{{ h_arb_idv|safe }}" class="container-fluid" style="padding: 5px"></div>
+				<div id="{{ h_prices_idv|safe }}" class="container-fluid" style="padding: 5px"></div>
+			</div>
+		</div>
+		<script>
+			var h_arb_idv = {{ h_arb_idv|safe }}
+			var h_arb_data = {{ h_arb_data|safe }}
+			var h_arb_title = {{ h_arb_title|safe }}
+			var h_arb_xAxis = {{ h_arb_xAxis|safe }}
+			var h_arb_yAxis = {{ h_arb_yAxis|safe }}
+			var h_arb_chart = {{ h_arb_chart|safe }}
+			
+			var h_prices_idv = {{ h_prices_idv|safe }}
+			var h_prices_data = {{ h_prices_data|safe }}
+			var h_prices_title = {{ h_prices_title|safe }}
+			var h_prices_xAxis = {{ h_prices_xAxis|safe }}
+			var h_prices_yAxis = {{ h_prices_yAxis|safe }}
+			var h_prices_chart = {{ h_prices_chart|safe }}
+		</script>
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<!--<script type="text/javascript" src="main.js"></script>-->
+		<script> {{ charts_js }} </script>
+		<script>
+
+			function rate_adj_change(){
+				rate_update();
+				kraken_zar_update();
+				remote_charges_update();
+				returns_update();
+			}
+
+			function rate_change(){
+				kraken_zar_update();
+				remote_charges_update();
+				returns_update();
+			}
+
+			function capital_investment_change(){
+				local_charges_update();
+				returns_update();
+			}
+
+			function local_charges_change(){
+				returns_update();
+			}
+
+
+			window.onload = function() {
+				rate_update();
+				local_charges_update();
+				remote_charges_update();
+				returns_update();
+				};
+
+			function rate_update()
+			{
+				//Get vals from the form
+				var rate_api = parseFloat(document.getElementById(`rate_api`).value);
+				var rate_padding = parseFloat(document.getElementById(`rate_padding`).value);
+				document.getElementById(`rate`).value = rate_api + rate_padding;
+			};
+
+			function kraken_zar_update()
+			{
+				//Get vals from the form
+				var rate = parseFloat(document.getElementById(`rate`).value);
+				var krakene = parseFloat(document.getElementById(`krakene`).value);
+				document.getElementById(`krakenz`).value = krakene * rate;
+			};
+
+			function local_charges_update()
+			{
+				var cap = parseFloat(document.getElementById(`capital_investment`).value);
+				var fee = cap *.0055;
+				if (fee < 160.00) {
+					fee = 160.00;
+				} else if (fee > 675.00) {
+					fee = 675.00;
+				}
+				document.getElementById(`local_charges`).value = fee;
+			};
+
+			function remote_charges_update()
+			{
+				var rate = parseFloat(document.getElementById(`rate`).value);
+				rem_charges = 10.00 * rate
+				document.getElementById(`remote_charges`).value = rem_charges;
+			};
+
+			function returns_update()
+			{
+				var cap = parseFloat(document.getElementById(`capital_investment`).value);
+				var rate = parseFloat(document.getElementById(`rate`).value);
+				var kraken = parseFloat(document.getElementById(`krakene`).value);
+				var luno = parseFloat(document.getElementById(`luno`).value);
+				var local_charges = parseFloat(document.getElementById(`local_charges`).value);
+				var remote_charges = parseFloat(document.getElementById(`remote_charges`).value);
+				var swift_fees = parseFloat(document.getElementById(`swift_fees`).value);
+				var kraken_trade_fees = parseFloat(document.getElementById(`kraken_trade_fees`).value);
+				var luno_trade_fees = parseFloat(document.getElementById(`luno_trade_fees`).value);
+				var luno_withdraw_fee = parseFloat(document.getElementById(`luno_withdraw_fees`).value);
+				
+				// Capital investement * exchange rate
+				var eur = cap / rate
+				// Kraken's trade fees (0.26%)
+				var krak_fees = eur * (kraken_trade_fees/100)
+				var eur_less_kraken_fees = eur - krak_fees
+				// buy BTC for remainder
+				var btc = eur_less_kraken_fees/kraken
+
+				// BTC arrives in Luno wallet
+				// they charge 1% to sell for ZAR
+				var luno_trading_fees = btc * (luno_trade_fees/100)
+				var btc_less_luno_fees = btc - luno_trading_fees
+				// sell the remaining BTC for ZAR @ Luno price
+				var zar = btc_less_luno_fees * luno
+				// moving from Luno to bank incurs an R8.50 fee
+				var zar_less_withdraw_fee = zar - luno_withdraw_fee
+				// finally account for initial bank charges
+				var ret = zar_less_withdraw_fee - cap - local_charges - swift_fees - remote_charges
+				var arb_adj = (ret/cap)*100
+				
+				document.getElementById(`arb_adj`).value = arb_adj;
+				document.getElementById(`remote_btc`).value = btc.toFixed(2);
+				document.getElementById(`ret`).value = ret.toFixed(2);
+			};		
+		</script>
+	</body>
+</html>

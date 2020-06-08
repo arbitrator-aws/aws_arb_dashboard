@@ -1,0 +1,221 @@
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+        integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <style>
+        {{dashboard_css}}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script>{ { dashboard_js } }</script> -->
+</head>
+
+<body>
+
+    <div class="grid-container">
+
+        <header class="header">
+
+            <div class="header__search">Arbitrator 0.2 </div>
+            <div class="header__timestamp">{{ ts[:-9]|safe }} (UTC)</div>
+
+        </header>
+
+        <div class="col" style="background-color:white;padding: 5px">Luno price (ZAR): {{ luno|safe }}</div>
+        <div class="col" style="background-color:white;padding: 5px">Kraken price (ZAR): {{ krakenz|safe }}</div>
+
+        <main class="main">
+            <div class="main-overview">
+                <div class="overviewcard">
+                    <div class="overviewcard__icon tooltip">Arbitrage (i)
+                        <span class="tooltiptext">Padded exchange rate, standard fees.</span></div>
+                    <div class="overviewcard__info" id="ov_arb"></div>
+                </div>
+                <div class="overviewcard">
+                    <div class="overviewcard__icon tooltip">Exchange rate (padded)
+                        <span class="tooltiptext">Updated hourly, ZAR/EUR, padded with 0.29%.</span></div>
+                    <div class="overviewcard__info" id="ov_rate_padded"></div>
+                </div>
+                <div class="overviewcard">
+                    <div class="overviewcard__icon tooltip">Luno BTC price
+                        <span class="tooltiptext">ZAR/EUR, padded with 0.29%.</span></div>
+                    <div class="overviewcard__info" id="ov_luno_zar"></div>
+                </div>
+                <div class="overviewcard">
+                    <div class="overviewcard__icon tooltip">Kraken BTC price
+                        <span class="tooltiptext">ZAR/EUR, padded with 0.29%.</span></div>
+                    <div class="overviewcard__info" id="ov_kraken_zar"></div>
+
+                </div>
+            </div>
+
+            <div class="main-cards">
+                <div class="card">
+
+                    <h4>Exchange rate and BTC prices:</h4>
+                    <div class="label_value">
+                        <div>Exchange rate padding</div>
+                        <input type="text" id="rate_padding" name="rate_padding" size="5"
+                            onchange="rate_padding_change()" />
+                    </div>
+                    <div class="label_value">
+                        <div class="tooltip">Exchange rate (i)
+                            <span class="tooltiptext"><a href="https://fixer.io/" target="_blank">fixer.io</a></span>
+                        </div>
+                        <div id="rate_api" name="rate_api"></div>
+                    </div>
+                    <div class="label_value">
+                        <div class="tooltip">Padded exchange rate (i)
+                            <span class="tooltiptext"><a href="https://www.fnb.co.za/rates/ForeignExchangeRates.html"
+                                    target="_blank">FNB rates</a></span>
+                        </div>
+                        <div id="padded_rate" name="padded_rate"></div>
+                    </div>
+
+                    <div class="label_value">
+                        <div>Kraken BTC price</div>
+                        <div class="euro" id="krakene" name="krakene"></div>
+                    </div>
+
+                    <div class="label_value">
+                        <div>Kraken BTC price</div>
+                        <div id="krakenz" name="krakenz"></div>
+                    </div>
+
+                    <div class="label_value">
+                        <div>Luno BTC price</div>
+                        <div id="luno" name="luno">{{ luno|safe }}</div>
+                    </div>
+
+                </div>
+
+                <div class="card">
+                    <h4>Investment & Fees:</h4>
+                    <div class="label_value">
+                        <div>Investment R</div>
+                        <input type="text" id="capital_investment" name="capital_investment" value=50000.00 size=8
+                            onchange="capital_investment_change()" />
+                    </div>
+
+                    <div class="label_value">
+                        <div class="tooltip">Local bank charges (i) R
+                            <span class="tooltiptext"><a
+                                    href="https://www.fnb.co.za/downloads/pricing-guide/products/FNB_PricingGuide_Forex.pdf"
+                                    target="_blank">FNB charges</a></span>
+                        </div>
+                        <input type="text" id="local_charges" name="local_charges" size=8 onchange="returns_update()" />
+                    </div>
+
+                    <div class="label_value">
+                        <div class="tooltip">Swift fees (i) R
+                            <span class="tooltiptext"><a
+                                    href="https://www.fnb.co.za/downloads/pricing-guide/products/FNB_PricingGuide_Forex.pdf"
+                                    target="_blank">FNB charges</a></span>
+                        </div>
+                        <input type="text" id="swift_fees" name="swift_fees" value=115.00 size=8
+                            onchange="returns_update()">
+                    </div>
+
+                    <div class="label_value">
+                        <div>Remote charges R</div>
+                        <input type="text" id="remote_charges" name="remote_charges" size=8
+                            onchange="returns_update()" />
+                    </div>
+
+                    <div class="label_value">
+                        <div>Kraken trade fees (%)</div>
+                        <input type="text" id="kraken_trade_fees" name="kraken_trade_fees" value=0.26 size=8
+                            onchange="returns_update()" />
+                    </div>
+
+                    <div class="label_value">
+                        <div>Luno trade fees (%)</div>
+                        <input type="text" id="luno_trade_fees" name="luno_trade_fees" value=1.0 size=8
+                            onchange="returns_update()" />
+                    </div>
+
+                    <div class="label_value">
+                        <div>Luno withdrawel fees R</div>
+                        <input type="text" id="luno_withdraw_fees" name="luno_withdraw_fees" value=8.50 size=8
+                            onchange="returns_update()" />
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>Returns:</h4>
+                    <div class="label_value">
+                        <div>BTC purchased</div>
+                        <div id="remote_btc" name="remote_btc"></div>
+                    </div>
+
+                    <div class="label_value">
+                        <div>Return</div>
+                        <div id="return" name="return"></div>
+                    </div>
+
+                    <div class="label_value">
+                        <div>Arbitrage realised</div>
+                        <div id="arb_realised" name="arb_realised"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="main-charts">
+                <div class="chart">
+                    <div id="{{ h_arb_idv|safe }}" class="container-fluid" style="padding: 5px"></div>
+				</div>
+                <div class="chart">
+                    <div id="{{ h_prices_idv|safe }}" class="container-fluid" style="padding: 5px"></div>
+                </div>
+                <div class="chart">
+                    <div id="arb_chart_test" class="container-fluid" style="padding: 5px"></div>
+                </div>
+            </div>
+
+
+            </div>
+        </main>
+
+        <footer class="footer">
+            <footer class="footer">
+                <div class="footer__copyright">&copy; 2020</div>
+                <div class="footer__signature"></div>
+            </footer>
+        </footer>
+
+    </div>
+    <!-- Calculation scripts-->
+    <script>
+
+        // Inital populate vars and fields
+        var krakene = {{ krakene|safe }}
+        var luno = {{ luno|safe }}
+        var rate_api = {{ rate|safe }}
+
+        // make the variables that change global
+        window.rate_padding = {{ rate_padding|safe }}
+        window.rate_padded = rate_api + window.rate_padding
+        window.krakenz = krakene * window.rate_padded
+
+        // inject the javascript here
+        {{ form_calcs_js|safe }}
+    </script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        var h_arb_idv = {{ h_arb_idv|safe }}
+        var h_arb_data = {{ h_arb_data|safe }}
+        var h_arb_title = {{ h_arb_title|safe }}
+        var h_arb_xAxis = {{ h_arb_xAxis|safe }}
+        var h_arb_yAxis = {{ h_arb_yAxis|safe }}
+        var h_arb_chart = {{ h_arb_chart|safe }}
+        
+        var h_prices_idv = {{ h_prices_idv|safe }}
+        var h_prices_data = {{ h_prices_data|safe }}
+        var h_prices_title = {{ h_prices_title|safe }}
+        var h_prices_xAxis = {{ h_prices_xAxis|safe }}
+        var h_prices_yAxis = {{ h_prices_yAxis|safe }}
+        var h_prices_chart = {{ h_prices_chart|safe }}
+    </script>
+    <script> {{ charts_js }} </script>
+</body>

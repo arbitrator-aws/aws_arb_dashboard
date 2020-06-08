@@ -1,0 +1,10 @@
+.env
+.vscode
+.pyc
+__pycache__
+*/.chalice/deployments
+*/.chalice/deployed
+
+layers/wheels
+layers/zips
+layers/arbitrator_dashboard_01/
