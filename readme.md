@@ -67,6 +67,3 @@ aws lambda publish-layer-version \
 --description "Python 3.6.9 layer: pydeps and dashboard test" \
 --content S3Bucket=arbitrator-store,S3Key=lambda/layers/arbitrator_dashboard_01/arbitrator_dashboard_01.zip \
 --compatible-runtimes python3.6
-
-
-test
