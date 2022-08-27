@@ -61,7 +61,7 @@ popd
 ## source awsmfa xxxxx 
 aws s3 sync layers/zips/ s3://arbitrator-store/lambda/layers/arbitrator_dashboard_01/ --delete
 
-## Build/update layer absaoss-fraud-py36-np-pd-tfl
+## Build/update layer 
 aws lambda publish-layer-version \
 --layer-name arbitrator-dashboard \
 --description "Python 3.6.9 layer: pydeps and dashboard test" \
