@@ -4,11 +4,16 @@ arbitrator-dashboard
     - 1st revision
 arbitrator-dashboard-0.2
     - second rev
-## venv
-python3 -m venv /home/phil/vscode_proj/aws/aws_arb_dashboard/.env
-source /home/phil/vscode_proj/aws/aws_arb_dashboard/.env/bin/activate
 
-pip install chalice==1.13.1 Jinja2==2.11.1 requests==2.18.4
+
+## venv
+proj_path=/home/phil/vscode_proj/arbitrator-aws/aws_arbitrator_0.2/aws_arb_dashboard
+conda activate py37
+python3 -m venv $proj_path/.env
+conda deactivate
+source $proj_path/.env/bin/activate
+
+pip3 install -r requirements.txt
 
 chalice new-project db_test && cd db_test
 
